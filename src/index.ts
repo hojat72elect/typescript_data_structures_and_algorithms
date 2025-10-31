@@ -1,0 +1,1 @@
+console.log("My name is Hojat\nand I can't deny JS is a bit weird.\nStill, I really love it.")
