@@ -6,7 +6,7 @@
      "outDir": "./dist",
     "module": "esnext",
     "target": "esnext",
-    "types": [],
+    "types": ["vitest/globals"],
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
