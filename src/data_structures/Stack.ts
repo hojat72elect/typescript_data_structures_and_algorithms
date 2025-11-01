@@ -4,7 +4,7 @@
 export class Stack {
     private dataHolder: any[];
 
-    constructor(data = []) {
+    constructor(data: any[] = []) {
         this.dataHolder = data;
     }
 
@@ -35,6 +35,6 @@ export class Stack {
     }
 
     toString() {
-      return this.dataHolder.join(", ");
+        return this.dataHolder.join(", ");
     }
 }

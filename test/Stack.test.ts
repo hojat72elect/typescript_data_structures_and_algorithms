@@ -1,59 +1,56 @@
 import {Stack} from "../src/data_structures/Stack";
 
 
-describe('Stack Data Structure', () => {
-    let stack:Stack;
+describe('Stack', () => {
+    let stack: Stack;
 
     beforeEach(() => {
         stack = new Stack();
     });
 
-    test('Simply pushing and popping a Stack generates LIFO behavior and updates the length of the stack as well.', () => {
-
-        stack.push("h");
-        expect(stack.getSize()).toBe(1);
-        stack.push("o");
-        expect(stack.getSize()).toBe(2);
-        stack.push("j");
-        expect(stack.getSize()).toBe(3);
-        stack.push("a");
-        expect(stack.getSize()).toBe(4);
-        stack.push("t");
-        expect(stack.getSize()).toBe(5);
-
-        expect(stack.pop()).toBe("t");
-        expect(stack.getSize()).toBe(4);
-        expect(stack.pop()).toBe("a");
-        expect(stack.getSize()).toBe(3);
-        expect(stack.pop()).toBe("j");
-        expect(stack.getSize()).toBe(2);
-        expect(stack.pop()).toBe("o");
-        expect(stack.getSize()).toBe(1);
-        expect(stack.pop()).toBe("h");
+    test('The initial stack without input is empty.', () => {
+        expect(stack.isEmpty()).toBe(true);
         expect(stack.getSize()).toBe(0);
-
-
-    })
-
-    test("Popping an empty Stack should return undefined", () => {
-
-        expect(stack.pop()).toBeUndefined();
     });
 
-    test("Peeking into a Stack is safe, doesn't have side effects and wouldn't throw an error for empty Stack", () => {
+    test('Loading the constructor with an array will make them initial contents of the stack.', () => {
+        const initialArray = [1, 2, 3];
+        const stackWithItems = new Stack(initialArray);
+        expect(stackWithItems.isEmpty()).toBe(false);
+        expect(stackWithItems.getSize()).toBe(3);
+        expect(stackWithItems.peek()).toBe(3);
+    });
 
+    test('push adds an element', () => {
+        stack.push(10);
+        expect(stack.isEmpty()).toBe(false);
+        expect(stack.getSize()).toBe(1);
+        expect(stack.peek()).toBe(10);
+    });
 
+    test('pop removes and returns the top element', () => {
+        stack.push(10);
+        stack.push(20);
+        const poppedElement = stack.pop();
+        expect(poppedElement).toBe(20);
+        expect(stack.getSize()).toBe(1);
+        expect(stack.peek()).toBe(10);
+    });
+
+    test("Popping an empty Stack returns undefined", () => {
+        expect(stack.pop()).toBeUndefined();
+        expect(stack.isEmpty()).toBe(true);
+    });
+
+    test('peek returns the top element without removing it', () => {
+        stack.push(10);
+        stack.push(20);
+        expect(stack.peek()).toBe(20);
+        expect(stack.getSize()).toBe(2);
+    });
+
+    test('peeking an empty stack returns undefined', () => {
         expect(stack.peek()).toBeUndefined();
-
-        stack.push(1);
-        expect(stack.peek()).toBe(1);
-        stack.push(2);
-        stack.push(3);
-        expect(stack.peek()).toBe(3);
-        stack.pop();
-        expect(stack.peek()).toBe(2);
-
-
     });
 
     test("Clearing a stack will throw away all data but keeps reference to the stack", () => {
