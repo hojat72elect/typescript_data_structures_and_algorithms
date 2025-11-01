@@ -1,4 +1,5 @@
-import {Stack} from "../src/data_structures/Stack.js";
+import {Stack} from "../src/data_structures/Stack";
+
 
 describe('Stack unit tests', () => {
 
@@ -32,20 +33,15 @@ describe('Stack unit tests', () => {
 
     })
 
-    test("Popping an empty Stack should throw an error", () => {
-
+    test("Popping an empty Stack should return undefined", () => {
         const exampleStack = new Stack();
-
-        expect(() => {
-            exampleStack.pop();
-        }).toThrow();
-
+        expect(exampleStack.pop()).toBeUndefined();
     });
 
     test("Peeking into a Stack is safe, doesn't have side effects and wouldn't throw an error for empty Stack", () => {
 
         const exampleStack = new Stack();
-        expect(exampleStack.peek()).toBe(null);
+        expect(exampleStack.peek()).toBeUndefined();
 
         exampleStack.push(1);
         expect(exampleStack.peek()).toBe(1);
@@ -69,7 +65,7 @@ describe('Stack unit tests', () => {
 
         exampleStack.clear();
         expect(exampleStack.getSize()).toBe(0);
-        expect(exampleStack.peek()).toBe(null);
+        expect(exampleStack.peek()).toBeUndefined();
 
     });
 

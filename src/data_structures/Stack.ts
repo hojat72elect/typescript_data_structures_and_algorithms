@@ -4,23 +4,21 @@
 export class Stack {
     private dataHolder: any[];
 
-    constructor() {
-        this.dataHolder = [];
+    constructor(data = []) {
+        this.dataHolder = data;
     }
 
-    push(value: any) {
-        this.dataHolder.push(value);
+    push(newValue: any) {
+        this.dataHolder.push(newValue);
     }
 
     peek() {
-        if (this.dataHolder.length === 0) return null;
+        if (this.isEmpty()) return undefined;
         return this.dataHolder[this.dataHolder.length - 1];
     }
 
     pop() {
-        if (this.dataHolder.length === 0)
-            throw new Error("The stack is empty!!");
-
+        if (this.isEmpty()) return undefined;
         return this.dataHolder.pop();
     }
 
@@ -32,11 +30,11 @@ export class Stack {
         return this.dataHolder.length;
     }
 
+    isEmpty() {
+        return this.dataHolder.length === 0;
+    }
+
     toString() {
-        let stringRepresentation = "";
-        [...this.dataHolder].reverse().map((stackElement: any) => {
-            stringRepresentation += ` ${stackElement} -> `;
-        });
-        return stringRepresentation;
+      return this.dataHolder.join(", ");
     }
 }
