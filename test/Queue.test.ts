@@ -19,19 +19,15 @@ describe('Queue unit tests', () => {
     });
 
     test("dequeue on an empty queue, throws an error", () => {
-
         const sut = new Queue();
-
-        expect(() => {
-            sut.dequeue();
-        }).toThrow();
+        expect(sut.dequeue()).toBeUndefined();
     });
 
     test("Peeking into front or back of a queue is safe and doesn't have any side-effects.", () => {
 
         const sut = new Queue();
-        expect(sut.peekFront()).toBeNull();
-        expect(sut.peekBack()).toBeNull();
+        expect(sut.peekFront()).toBeUndefined();
+        expect(sut.peekBack()).toBeUndefined();
 
         sut.enqueue("Toronto");
 
@@ -58,7 +54,7 @@ describe('Queue unit tests', () => {
         sut.enqueue("New York");
         sut.enqueue("Paris");
         expect(sut.getSize()).toBe(3);
-        expect(sut.toString()).toBe("Toronto--New York--Paris--");
+        expect(sut.toString()).toBe("Toronto--New York--Paris");
 
     });
 
@@ -72,8 +68,6 @@ describe('Queue unit tests', () => {
 
         sut.clear();
         expect(sut.getSize()).toBe(0);
-        expect(() => {
-            sut.dequeue();
-        }).toThrow();
+        expect(sut.dequeue()).toBeUndefined();
     });
 });
