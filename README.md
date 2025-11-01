@@ -1,0 +1,3 @@
+In this repository, I am going to implement some data structures and algorithms in TS, and also will do my best to solve some of the weird flaws of JS runtime. 
+
+There's also the `Hedwig` compiler which is currently being developed as a directory in this repo. I am trying to make a complete suite for running JS code in a native manner. For further info about `Hedwig` compiler, refer to the *Wiki* of this repo.
