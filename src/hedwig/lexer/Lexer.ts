@@ -3,40 +3,43 @@
  * The lexer will create an array of these tokens for a given JS source code.
  */
 type Token = {
-    type: string;
+    type: TokenType;
     value: string;
     line: number;
     column: number;
 }
 
+/**
+ * All kinds of tokens we are looking for.
+ */
+enum TokenType {
+    KEYWORD = "KEYWORD",
+
+    // An identifier is the name of anything defined by the user
+    IDENTIFIER = "IDENTIFIER",
+
+    // Literals
+    NUMBER = 'NUMBER',
+    STRING = 'STRING',
+    TEMPLATE_STRING = 'TEMPLATE_STRING',
+    BOOLEAN = 'BOOLEAN',
+    NULL = 'NULL',
+
+    // Operators (can be mathematical, logical, or bitwise)
+    OPERATOR = 'OPERATOR',
+
+    PUNCTUATION = 'PUNCTUATION',
+
+    COMMENT = 'COMMENT',
+
+    //End of file
+    EOF = 'EOF',
+
+    // The character is not recognizable by our lexer
+    UNKNOWN = 'UNKNOWN'
+}
+
 export class JavaScriptLexer {
-    // All kinds of tokens we are looking for.
-    static TOKEN_TYPES = {
-
-        KEYWORD: "KEYWORD",
-
-        // An identifier is the name of anything defined by the user
-        IDENTIFIER: "IDENTIFIER",
-
-        // Literals
-        NUMBER: 'NUMBER',
-        STRING: 'STRING',
-        TEMPLATE_STRING: 'TEMPLATE_STRING',
-        REGEX: 'REGEX',
-        BOOLEAN: 'BOOLEAN',
-        NULL: 'NULL',
-
-        // Operators (can be mathematical, logical, or bitwise)
-        OPERATOR: 'OPERATOR',
-
-        PUNCTUATION: 'PUNCTUATION',
-
-        COMMENT: 'COMMENT',
-
-        WHITESPACE: 'WHITESPACE',
-
-        EOF: 'EOF' //End of file
-    };
 
     // Keywords of the JavaScript programming language
     static KEYWORDS = new Set([
@@ -163,7 +166,7 @@ export class JavaScriptLexer {
         }
 
         return {
-            type: JavaScriptLexer.TOKEN_TYPES.NUMBER,
+            type: TokenType.NUMBER,
             value: number,
             line: this.line,
             column: this.column - number.length
@@ -194,7 +197,7 @@ export class JavaScriptLexer {
         }
 
         return {
-            type: JavaScriptLexer.TOKEN_TYPES.STRING,
+            type: TokenType.STRING,
             value: string,
             line: this.line,
             column: this.column - string.length
@@ -229,7 +232,7 @@ export class JavaScriptLexer {
         }
 
         return {
-            type: JavaScriptLexer.TOKEN_TYPES.TEMPLATE_STRING,
+            type: TokenType.TEMPLATE_STRING,
             value: templateString,
             line: this.line,
             column: this.column - templateString.length
@@ -244,10 +247,10 @@ export class JavaScriptLexer {
 
         if (JavaScriptLexer.KEYWORDS.has(identifier)) {
             const type = identifier === 'true' || identifier === 'false'
-                ? JavaScriptLexer.TOKEN_TYPES.BOOLEAN
+                ? TokenType.BOOLEAN
                 : identifier === 'null'
-                    ? JavaScriptLexer.TOKEN_TYPES.NULL
-                    : JavaScriptLexer.TOKEN_TYPES.KEYWORD;
+                    ? TokenType.NULL
+                    : TokenType.KEYWORD;
 
             return {
                 type,
@@ -258,7 +261,7 @@ export class JavaScriptLexer {
         }
 
         return {
-            type: JavaScriptLexer.TOKEN_TYPES.IDENTIFIER,
+            type: TokenType.IDENTIFIER,
             value: identifier,
             line: this.line,
             column: this.column - identifier.length
@@ -295,7 +298,7 @@ export class JavaScriptLexer {
         }
 
         return {
-            type: JavaScriptLexer.TOKEN_TYPES.COMMENT,
+            type: TokenType.COMMENT,
             value: comment,
             line: startLine,
             column: startColumn
@@ -326,7 +329,7 @@ export class JavaScriptLexer {
                 this.advance();
             }
 
-            const type = JavaScriptLexer.OPERATORS.has(operator) ? JavaScriptLexer.TOKEN_TYPES.OPERATOR : JavaScriptLexer.TOKEN_TYPES.PUNCTUATION;
+            const type = JavaScriptLexer.OPERATORS.has(operator) ? TokenType.OPERATOR : TokenType.PUNCTUATION;
 
             return {
                 type,
@@ -395,7 +398,7 @@ export class JavaScriptLexer {
 
             // If we get to this point, it's an unrecognized character
             this.tokens.push({
-                type: 'UNKNOWN',
+                type: TokenType.UNKNOWN,
                 value: currentCharacter,
                 line: this.line,
                 column: this.column
@@ -405,7 +408,7 @@ export class JavaScriptLexer {
 
         // Add an EOF token for finishing the source code
         this.tokens.push({
-            type: JavaScriptLexer.TOKEN_TYPES.EOF,
+            type: TokenType.EOF,
             value: '',
             line: this.line,
             column: this.column
