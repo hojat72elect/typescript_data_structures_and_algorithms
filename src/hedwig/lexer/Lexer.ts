@@ -1,4 +1,8 @@
-interface Token {
+/**
+ * Each token is a single unit of the source code written in JavaScript programming language.
+ * The lexer will create an array of these tokens for a given JS source code.
+ */
+type Token = {
     type: string;
     value: string;
     line: number;
@@ -58,7 +62,7 @@ export class JavaScriptLexer {
         '==', '===', '!=', '!==', '>', '<', '>=', '<=', // Comparison operators
         '!', '&&', '||', '??', '?.', // Logical, Nullish Coalescing, Optional Chaining operators
         '&', '|', '^', '~', '<<', '>>', '>>>', // Bitwise operators
-        '&=', '|=', '^=', '<<=', '>>=', '>>>=', // Bitwise assignment operators
+        '&=', '|=', '^=', '<<=', '>>=', '>>>', // Bitwise assignment operators
         '=>', '...' // Arrow function, Spread/Rest operator
     ]);
     static PUNCTUATION = new Set(['(', ')', '[', ']', '{', '}', ',', ';', ':', '.']);
