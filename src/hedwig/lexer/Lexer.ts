@@ -41,8 +41,7 @@ enum TokenType {
 
 export class JavaScriptLexer {
 
-    // Keywords of the JavaScript programming language
-    static KEYWORDS = new Set([
+    private readonly KEYWORDS = new Set([
         // Declaration keywords
         'var', 'let', 'const', 'function', 'class', 'import', 'export',
 
@@ -57,8 +56,7 @@ export class JavaScriptLexer {
         'this', 'super', 'new', 'typeof', 'instanceof', 'void', 'delete',
         'in', 'of', 'with', 'yield', 'await', 'async'
     ]);
-
-    static OPERATORS = new Set([
+    private readonly OPERATORS = new Set([
         '+', '-', '*', '/', '%', '**', '++', '--',
         '=', '+=', '-=', '*=', '/=', '%=', '**=',
         '==', '===', '!=', '!==', '>', '<', '>=', '<=',
@@ -67,8 +65,7 @@ export class JavaScriptLexer {
         '&=', '|=', '^=', '<<=', '>>=', '>>>',
         '=>', '...'
     ]);
-
-    static PUNCTUATION = new Set(['(', ')', '[', ']', '{', '}', ',', ';', ':', '.']);
+    private readonly PUNCTUATION = new Set(['(', ')', '[', ']', '{', '}', ',', ';', ':', '.']);
 
     private readonly code: string;
     private position: number;
@@ -114,7 +111,6 @@ export class JavaScriptLexer {
 
     /**
      * Returns the current character of the source code and also moves the offset of the code reader by one.
-     *  TODO: This should return the character that was advanced over.
      */
     private advance() {
         const currentCharacter = this.peek();
@@ -221,7 +217,7 @@ export class JavaScriptLexer {
                 templateString += this.advance(); // Add '$'
                 templateString += this.advance(); // Add '{'
                 // For the sake of simplicity, we're considering the whole template as one token
-                // TODO : Each one of the expressens inside a template string should be further tokenized.
+                // TODO : Each one of the expressions inside a template string should be further tokenized.
             } else {
                 templateString += this.advance();
             }
@@ -245,7 +241,7 @@ export class JavaScriptLexer {
         while (this.isAlphaNumeric(this.peek()))
             identifier += this.advance();
 
-        if (JavaScriptLexer.KEYWORDS.has(identifier)) {
+        if (this.KEYWORDS.has(identifier)) {
             const type = identifier === 'true' || identifier === 'false'
                 ? TokenType.BOOLEAN
                 : identifier === 'null'
@@ -315,10 +311,10 @@ export class JavaScriptLexer {
         for (let length = 4; length >= 1; length--) {
             const candidate = this.code.substring(this.position, this.position + length);
 
-            if (JavaScriptLexer.OPERATORS.has(candidate)) {
+            if (this.OPERATORS.has(candidate)) {
                 operator = candidate;
                 break;
-            } else if (JavaScriptLexer.PUNCTUATION.has(candidate)) {
+            } else if (this.PUNCTUATION.has(candidate)) {
                 operator = candidate;
                 break;
             }
@@ -329,7 +325,7 @@ export class JavaScriptLexer {
                 this.advance();
             }
 
-            const type = JavaScriptLexer.OPERATORS.has(operator) ? TokenType.OPERATOR : TokenType.PUNCTUATION;
+            const type = this.OPERATORS.has(operator) ? TokenType.OPERATOR : TokenType.PUNCTUATION;
 
             return {
                 type,
