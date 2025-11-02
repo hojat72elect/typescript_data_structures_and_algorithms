@@ -1,5 +1,6 @@
 import {TokenType} from "../../../src/hedwig/lexer/TokenType";
-import {JavaScriptLexer} from "../../../src/hedwig/lexer/Lexer";
+import {JavaScriptLexer} from "../../../src/hedwig/lexer/JavaScriptLexer";
+
 
 describe('JavaScriptLexer', () => {
 
