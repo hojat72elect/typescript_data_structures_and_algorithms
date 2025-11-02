@@ -12,7 +12,7 @@ type Token = {
 /**
  * All kinds of tokens we are looking for.
  */
-enum TokenType {
+export enum TokenType {
     KEYWORD = "KEYWORD",
 
     // An identifier is the name of anything defined by the user
