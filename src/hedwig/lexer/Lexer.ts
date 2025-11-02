@@ -81,19 +81,19 @@ export class JavaScriptLexer {
         this.tokens = [];
     }
 
-    isWhitespace(char: string) {
+    private isWhitespace(char: string) {
         return /[\s\t\r\n]/.test(char);
     }
 
-    isDigit(char: string) {
+    private isDigit(char: string) {
         return /[0-9]/.test(char);
     }
 
-    isLetter(char: string) {
+    private isLetter(char: string) {
         return /[a-zA-Z_]/.test(char);
     }
 
-    isAlphaNumeric(char: string) {
+    private isAlphaNumeric(char: string) {
         return this.isLetter(char) || this.isDigit(char);
     }
 
@@ -101,7 +101,7 @@ export class JavaScriptLexer {
      * Allows you to look up the character in a specific position (current position of the lexer + offset) of
      * the input code. using this function doesn't change the position of the lexer in your code.
      */
-    peek(offset: number = 0): string {
+    private peek(offset: number = 0): string {
         const _position = this.position + offset;
         if (_position < this.code.length)
             return this.code[_position] ?? '\0';
@@ -113,7 +113,7 @@ export class JavaScriptLexer {
      * Returns the current character of the source code and also moves the offset of the code reader by one.
      *  TODO: This should return the character that was advanced over.
      */
-    advance() {
+    private advance() {
         const currentCharacter = this.peek();
         if (currentCharacter === '\n') {
             this.line++;
@@ -129,7 +129,7 @@ export class JavaScriptLexer {
     /**
      *  Allows you to skip white spaces inside the source code until you get to meaningful parts of the code base.
      */
-    skipWhiteSpace() {
+    private skipWhiteSpace() {
         while (this.isWhitespace(this.peek()))
             this.advance();
     }
@@ -137,7 +137,7 @@ export class JavaScriptLexer {
     /**
      * Reads a number from the source code and returns it as a token.
      */
-    tokenizeNumber(): Token {
+    private tokenizeNumber(): Token {
         let number = '';
         let hasDot = false;
         let hasExponent = false;
@@ -174,7 +174,7 @@ export class JavaScriptLexer {
     /**
      * A normal string (non-templated) in JavaScript starts with either ' or ".
      */
-    tokenizeString(quoteCharacter: string): Token {
+    private tokenizeString(quoteCharacter: string): Token {
         let string = quoteCharacter;
         this.advance(); // The opening quote character has already been added to the string, so we skip it
 
@@ -201,11 +201,10 @@ export class JavaScriptLexer {
         };
     }
 
-
     /**
      * Template strings in JavaScript are opened and closed with a backtick.
      */
-    tokenizeTemplateString(): Token {
+    private tokenizeTemplateString(): Token {
         let templateString = '`';
         this.advance(); // The opening backtick has already been added to the string so we skip it.
 
@@ -237,7 +236,7 @@ export class JavaScriptLexer {
         };
     }
 
-    tokenizeIdentifier(): Token {
+    private tokenizeIdentifier(): Token {
         let identifier = '';
 
         while (this.isAlphaNumeric(this.peek()))
@@ -266,7 +265,7 @@ export class JavaScriptLexer {
         };
     }
 
-    tokenizeComment(): Token {
+    private tokenizeComment(): Token {
         const startLine = this.line;
         const startColumn = this.column;
         let comment = '';
@@ -306,7 +305,7 @@ export class JavaScriptLexer {
     /**
      * If it doesn't manage to read any operators or punctuations, it will return null.
      */
-    tokenizeOperatorOrPunctuation(): Token | null {
+    private tokenizeOperatorOrPunctuation(): Token | null {
         let operator = '';
 
         // Try to match the longest possible operator (longest operator in JS has 4 characters)
@@ -343,7 +342,7 @@ export class JavaScriptLexer {
     /**
      * The main part of this lexer which is in charge of the whole tokenization process.
      */
-    tokenize(): Token[] {
+    public tokenize(): Token[] {
         this.tokens = [];
         this.position = 0;
         this.line = 1;
