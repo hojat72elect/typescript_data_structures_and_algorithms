@@ -3,8 +3,8 @@ import {JavaScriptLexer} from "../../../src/hedwig/lexer/Lexer";
 describe('JavaScriptLexer', () => {
     it('should tokenize a simple variable declaration', () => {
         const code = 'let x = 10;';
-        const lexer = new JavaScriptLexer(code);
-        const tokens = lexer.tokenize();
+        const lexer = new JavaScriptLexer();
+        const tokens = lexer.tokenize(code);
         expect(tokens).toEqual([
             {type: 'KEYWORD', value: 'let', line: 1, column: 1},
             {type: 'IDENTIFIER', value: 'x', line: 1, column: 5},
@@ -17,8 +17,8 @@ describe('JavaScriptLexer', () => {
 
     it('should tokenize a function declaration', () => {
         const code = 'function add(a, b) { return a + b; }';
-        const lexer = new JavaScriptLexer(code);
-        const tokens = lexer.tokenize();
+        const lexer = new JavaScriptLexer();
+        const tokens = lexer.tokenize(code);
         expect(tokens).toEqual([
             {type: 'KEYWORD', value: 'function', line: 1, column: 1},
             {type: 'IDENTIFIER', value: 'add', line: 1, column: 10},
@@ -40,8 +40,8 @@ describe('JavaScriptLexer', () => {
 
     it('should tokenize different types of numbers', () => {
         const code = '123 45.67 8.9e10 11E-2';
-        const lexer = new JavaScriptLexer(code);
-        const tokens = lexer.tokenize();
+        const lexer = new JavaScriptLexer();
+        const tokens = lexer.tokenize(code);
         expect(tokens).toEqual([
             {type: 'NUMBER', value: '123', line: 1, column: 1},
             {type: 'NUMBER', value: '45.67', line: 1, column: 5},
@@ -53,8 +53,8 @@ describe('JavaScriptLexer', () => {
 
     it('should tokenize strings with single and double quotes', () => {
         const code = `'hello' "world"`;
-        const lexer = new JavaScriptLexer(code);
-        const tokens = lexer.tokenize();
+        const lexer = new JavaScriptLexer();
+        const tokens = lexer.tokenize(code);
         expect(tokens).toEqual([
             {type: 'STRING', value: `'hello'`, line: 1, column: 1},
             {type: 'STRING', value: '"world"', line: 1, column: 9},
@@ -64,8 +64,8 @@ describe('JavaScriptLexer', () => {
 
     it('should tokenize template strings', () => {
         const code = '`template string`';
-        const lexer = new JavaScriptLexer(code);
-        const tokens = lexer.tokenize();
+        const lexer = new JavaScriptLexer();
+        const tokens = lexer.tokenize(code);
         expect(tokens).toEqual([
             {type: 'TEMPLATE_STRING', value: '`template string`', line: 1, column: 1},
             {type: 'EOF', value: '', line: 1, column: 18},
@@ -78,8 +78,8 @@ describe('JavaScriptLexer', () => {
 /* multi-line
    comment */
 `;
-        const lexer = new JavaScriptLexer(code);
-        const tokens = lexer.tokenize();
+        const lexer = new JavaScriptLexer();
+        const tokens = lexer.tokenize(code);
         expect(tokens).toEqual([
             {type: 'COMMENT', value: '// single line comment', line: 2, column: 1},
             {type: 'COMMENT', value: '/* multi-line\n   comment */', line: 3, column: 1},
@@ -89,8 +89,8 @@ describe('JavaScriptLexer', () => {
 
     it('should handle unknown characters', () => {
         const code = '@#$';
-        const lexer = new JavaScriptLexer(code);
-        const tokens = lexer.tokenize();
+        const lexer = new JavaScriptLexer();
+        const tokens = lexer.tokenize(code);
         expect(tokens).toEqual([
             {type: 'UNKNOWN', value: '@', line: 1, column: 1},
             {type: 'UNKNOWN', value: '#', line: 1, column: 2},
@@ -104,8 +104,8 @@ describe('JavaScriptLexer', () => {
 let a = 1;
 const b = "two";
     `;
-        const lexer = new JavaScriptLexer(code);
-        const tokens = lexer.tokenize();
+        const lexer = new JavaScriptLexer();
+        const tokens = lexer.tokenize(code);
         expect(tokens).toEqual([
             {type: 'KEYWORD', value: 'let', line: 2, column: 1},
             {type: 'IDENTIFIER', value: 'a', line: 2, column: 5},

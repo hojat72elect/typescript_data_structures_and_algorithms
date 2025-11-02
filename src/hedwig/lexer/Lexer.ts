@@ -67,14 +67,12 @@ export class JavaScriptLexer {
     ]);
     private readonly PUNCTUATION = new Set(['(', ')', '[', ']', '{', '}', ',', ';', ':', '.']);
 
-    private readonly code: string;
     private position: number;
     private line: number;
     private column: number;
     private tokens: Token[];
 
-    constructor(code: string) {
-        this.code = code;
+    constructor() {
         this.position = 0;
         this.line = 1;
         this.column = 1;
@@ -101,10 +99,10 @@ export class JavaScriptLexer {
      * Allows you to look up the character in a specific position (current position of the lexer + offset) of
      * the input code. using this function doesn't change the position of the lexer in your code.
      */
-    private peek(offset: number = 0): string {
+    private peek(code: string, offset: number = 0): string {
         const _position = this.position + offset;
-        if (_position < this.code.length)
-            return this.code[_position] ?? '\0';
+        if (_position < code.length)
+            return code[_position] ?? '\0';
         else
             return '\0';
     }
@@ -112,8 +110,8 @@ export class JavaScriptLexer {
     /**
      * Returns the current character of the source code and also moves the offset of the code reader by one.
      */
-    private advance() {
-        const currentCharacter = this.peek();
+    private advance(code: string) {
+        const currentCharacter = this.peek(code);
         if (currentCharacter === '\n') {
             this.line++;
             this.column = 1;
@@ -128,21 +126,21 @@ export class JavaScriptLexer {
     /**
      *  Allows you to skip white spaces inside the source code until you get to meaningful parts of the code base.
      */
-    private skipWhiteSpace() {
-        while (this.isWhitespace(this.peek()))
-            this.advance();
+    private skipWhiteSpace(code: string) {
+        while (this.isWhitespace(this.peek(code)))
+            this.advance(code);
     }
 
     /**
      * Reads a number from the source code and returns it as a token.
      */
-    private tokenizeNumber(): Token {
+    private tokenizeNumber(code: string): Token {
         let number = '';
         let hasDot = false;
         let hasExponent = false;
 
-        while (this.isDigit(this.peek()) || (!hasDot && this.peek() === '.') || (!hasExponent && (this.peek() === 'e' || this.peek() === 'E'))) {
-            const currentCharacter = this.peek();
+        while (this.isDigit(this.peek(code)) || (!hasDot && this.peek(code) === '.') || (!hasExponent && (this.peek(code) === 'e' || this.peek(code) === 'E'))) {
+            const currentCharacter = this.peek(code);
 
             if (currentCharacter === '.') {
                 if (hasDot) break;
@@ -150,15 +148,15 @@ export class JavaScriptLexer {
             } else if (currentCharacter === 'e' || currentCharacter === 'E') {
                 if (hasExponent) break;
                 hasExponent = true;
-                number += this.advance();
+                number += this.advance(code);
 
                 // If your exponential number has a character 'e' or 'E' inside it, right after that character, there might be a sign (+ or -)
-                if (this.peek() === '+' || this.peek() === '-')
-                    number += this.advance();
+                if (this.peek(code) === '+' || this.peek(code) === '-')
+                    number += this.advance(code);
 
                 continue;
             }
-            number += this.advance();
+            number += this.advance(code);
         }
 
         return {
@@ -173,23 +171,23 @@ export class JavaScriptLexer {
     /**
      * A normal string (non-templated) in JavaScript starts with either ' or ".
      */
-    private tokenizeString(quoteCharacter: string): Token {
+    private tokenizeString(code: string, quoteCharacter: string): Token {
         let string = quoteCharacter;
-        this.advance(); // The opening quote character has already been added to the string, so we skip it
+        this.advance(code); // The opening quote character has already been added to the string, so we skip it
 
-        while (this.peek() !== quoteCharacter && this.peek() !== '\0') {
-            if (this.peek() === "\\") {
-                string += this.advance(); // Add the backslash to the string
-                if (this.peek() !== '\0') {
-                    string += this.advance(); // Add the escaped character to the string
+        while (this.peek(code) !== quoteCharacter && this.peek(code) !== '\0') {
+            if (this.peek(code) === "\\") {
+                string += this.advance(code); // Add the backslash to the string
+                if (this.peek(code) !== '\0') {
+                    string += this.advance(code); // Add the escaped character to the string
                 }
             } else {
-                string += this.advance();
+                string += this.advance(code);
             }
         }
 
-        if (this.peek() === quoteCharacter) {
-            string += this.advance(); // Add the closing quote character to the string
+        if (this.peek(code) === quoteCharacter) {
+            string += this.advance(code); // Add the closing quote character to the string
         }
 
         return {
@@ -203,28 +201,28 @@ export class JavaScriptLexer {
     /**
      * Template strings in JavaScript are opened and closed with a backtick.
      */
-    private tokenizeTemplateString(): Token {
+    private tokenizeTemplateString(code: string): Token {
         let templateString = '`';
-        this.advance(); // The opening backtick has already been added to the string so we skip it.
+        this.advance(code); // The opening backtick has already been added to the string so we skip it.
 
-        while (this.peek() !== '`' && this.peek() !== '\0') {
-            if (this.peek() === '\\') {
-                templateString += this.advance(); // Add the backslash to the string
-                if (this.peek() !== '\0') {
-                    templateString += this.advance(); // Add the escaped character which comes after the backslash
+        while (this.peek(code) !== '`' && this.peek(code) !== '\0') {
+            if (this.peek(code) === '\\') {
+                templateString += this.advance(code); // Add the backslash to the string
+                if (this.peek(code) !== '\0') {
+                    templateString += this.advance(code); // Add the escaped character which comes after the backslash
                 }
-            } else if (this.peek() === '$' && this.peek(1) === '{') {
-                templateString += this.advance(); // Add '$'
-                templateString += this.advance(); // Add '{'
+            } else if (this.peek(code) === '$' && this.peek(code, 1) === '{') {
+                templateString += this.advance(code); // Add '$'
+                templateString += this.advance(code); // Add '{'
                 // For the sake of simplicity, we're considering the whole template as one token
                 // TODO : Each one of the expressions inside a template string should be further tokenized.
             } else {
-                templateString += this.advance();
+                templateString += this.advance(code);
             }
         }
 
-        if (this.peek() === '`') {
-            templateString += this.advance(); // Add the closing backtick to the string
+        if (this.peek(code) === '`') {
+            templateString += this.advance(code); // Add the closing backtick to the string
         }
 
         return {
@@ -235,11 +233,11 @@ export class JavaScriptLexer {
         };
     }
 
-    private tokenizeIdentifier(): Token {
+    private tokenizeIdentifier(code: string): Token {
         let identifier = '';
 
-        while (this.isAlphaNumeric(this.peek()))
-            identifier += this.advance();
+        while (this.isAlphaNumeric(this.peek(code)))
+            identifier += this.advance(code);
 
         if (this.KEYWORDS.has(identifier)) {
             const type = identifier === 'true' || identifier === 'false'
@@ -264,33 +262,33 @@ export class JavaScriptLexer {
         };
     }
 
-    private tokenizeComment(): Token {
+    private tokenizeComment(code: string): Token {
         const startLine = this.line;
         const startColumn = this.column;
         let comment = '';
 
-        if (this.peek(1) === '/') {
+        if (this.peek(code, 1) === '/') {
             // This is a single line comment
-            this.advance(); // Read the first '/'
-            this.advance(); // Read the second '/'
+            this.advance(code); // Read the first '/'
+            this.advance(code); // Read the second '/'
             comment = "//";
 
-            while (this.peek() !== '\n' && this.peek() !== "\0") {
-                comment += this.advance();
+            while (this.peek(code) !== '\n' && this.peek(code) !== "\0") {
+                comment += this.advance(code);
             }
-        } else if (this.peek(1) === '*') {
+        } else if (this.peek(code, 1) === '*') {
             // This is a multi-line comment
-            this.advance(); // Read the '/'
-            this.advance(); // Read the '*'
+            this.advance(code); // Read the '/'
+            this.advance(code); // Read the '*'
             comment = "/*"
 
-            while (!(this.peek() === '*' && this.peek(1) === '/') && this.peek() !== '\0') {
-                comment += this.advance();
+            while (!(this.peek(code) === '*' && this.peek(code, 1) === '/') && this.peek(code) !== '\0') {
+                comment += this.advance(code);
             }
 
             // After reading the whole comment, we need to make sure we have read the closing '*/' as well.
-            if (this.peek() === '*') comment += this.advance();
-            if (this.peek() === '/') comment += this.advance();
+            if (this.peek(code) === '*') comment += this.advance(code);
+            if (this.peek(code) === '/') comment += this.advance(code);
         }
 
         return {
@@ -304,12 +302,12 @@ export class JavaScriptLexer {
     /**
      * If it doesn't manage to read any operators or punctuations, it will return null.
      */
-    private tokenizeOperatorOrPunctuation(): Token | null {
+    private tokenizeOperatorOrPunctuation(code: string): Token | null {
         let operator = '';
 
         // Try to match the longest possible operator (longest operator in JS has 4 characters)
         for (let length = 4; length >= 1; length--) {
-            const candidate = this.code.substring(this.position, this.position + length);
+            const candidate = code.substring(this.position, this.position + length);
 
             if (this.OPERATORS.has(candidate)) {
                 operator = candidate;
@@ -322,7 +320,7 @@ export class JavaScriptLexer {
 
         if (operator) {
             for (let i = 0; i < operator.length; i++) {
-                this.advance();
+                this.advance(code);
             }
 
             const type = this.OPERATORS.has(operator) ? TokenType.OPERATOR : TokenType.PUNCTUATION;
@@ -341,52 +339,52 @@ export class JavaScriptLexer {
     /**
      * The main part of this lexer which is in charge of the whole tokenization process.
      */
-    public tokenize(): Token[] {
+    public tokenize(code: string): Token[] {
         this.tokens = [];
         this.position = 0;
         this.line = 1;
         this.column = 1;
 
-        while (this.position < this.code.length) {
-            const currentCharacter = this.peek();
+        while (this.position < code.length) {
+            const currentCharacter = this.peek(code);
 
             if (this.isWhitespace(currentCharacter)) {
-                this.skipWhiteSpace();
+                this.skipWhiteSpace(code);
                 continue;
             }
 
             // Comments
-            if (currentCharacter === '/' && (this.peek(1) === '/' || this.peek(1) === '*')) {
-                this.tokens.push(this.tokenizeComment());
+            if (currentCharacter === '/' && (this.peek(code, 1) === '/' || this.peek(code, 1) === '*')) {
+                this.tokens.push(this.tokenizeComment(code));
                 continue;
             }
 
             // Numbers
-            if (this.isDigit(currentCharacter) || (currentCharacter === '.' && this.isDigit(this.peek(1)))) {
-                this.tokens.push(this.tokenizeNumber());
+            if (this.isDigit(currentCharacter) || (currentCharacter === '.' && this.isDigit(this.peek(code, 1)))) {
+                this.tokens.push(this.tokenizeNumber(code));
                 continue;
             }
 
             // Strings
             if (currentCharacter === '"' || currentCharacter === "'") {
-                this.tokens.push(this.tokenizeString(currentCharacter));
+                this.tokens.push(this.tokenizeString(code, currentCharacter));
                 continue;
             }
 
             // Template strings
             if (currentCharacter === '`') {
-                this.tokens.push(this.tokenizeTemplateString());
+                this.tokens.push(this.tokenizeTemplateString(code));
                 continue;
             }
 
             // Identifiers and keywords
             if (this.isLetter(currentCharacter)) {
-                this.tokens.push(this.tokenizeIdentifier());
+                this.tokens.push(this.tokenizeIdentifier(code));
                 continue;
             }
 
             // Operators and punctuation
-            const opToken = this.tokenizeOperatorOrPunctuation();
+            const opToken = this.tokenizeOperatorOrPunctuation(code);
             if (opToken) {
                 this.tokens.push(opToken);
                 continue;
@@ -399,7 +397,7 @@ export class JavaScriptLexer {
                 line: this.line,
                 column: this.column
             });
-            this.advance();
+            this.advance(code);
         }
 
         // Add an EOF token for finishing the source code
