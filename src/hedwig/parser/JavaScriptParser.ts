@@ -33,6 +33,7 @@ export class JavaScriptParser {
     }
 
     private previous(): Token {
+        // @ts-ignore
         return this.tokens[this.current - 1];
     }
 
@@ -877,6 +878,7 @@ export class JavaScriptParser {
         if (this.match(TokenType.PUNCTUATION) && this.previous().value === ':') {
             value = this.parseExpression();
         } else if (this.check(TokenType.PUNCTUATION) && this.peek().value === '(') {
+            // @ts-ignore
             value = this.parseFunctionExpression();
             method = true;
         } else {

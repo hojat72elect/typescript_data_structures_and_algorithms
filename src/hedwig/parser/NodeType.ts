@@ -4,6 +4,7 @@
 export type NodeType =
     | 'Program'
     | 'VariableDeclaration'
+    | 'VariableDeclarator'
     | 'FunctionDeclaration'
     | 'ClassDeclaration'
     | 'ClassBody'
