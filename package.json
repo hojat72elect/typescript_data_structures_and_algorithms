@@ -1,15 +1,15 @@
 {
   "name": "typescript_data_structures_and_algorithms",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "index.js",
   "scripts": {
     "dev": "",
     "test": "vitest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Hojat Ghasemi",
   "license": "MIT",
-  "description": "",
+  "description": "A collection of important data structures and algorithms; written in TypeScript.",
   "devDependencies": {
     "typescript": "^5.9.3",
     "vitest": "^1.0.0"
