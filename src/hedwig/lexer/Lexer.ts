@@ -12,14 +12,11 @@ type Token = {
 export class JavaScriptLexer {
     // All kinds of tokens we are looking for.
     static TOKEN_TYPES = {
-        // keywords are defined later on in this class.
+
         KEYWORD: "KEYWORD",
 
-        // An identifier is the name of class or variable or anything else that has been defined by the user and they have named it.
-        IDENTIFIER: "IDENTIFIER", // This is a generic identifier type.
-        // We might want to have more specific identifier types like:
-        // CLASS_IDENTIFIER: "CLASS_IDENTIFIER",
-        // VARIABLE_IDENTIFIER: "VARIABLE_IDENTIFIER",
+        // An identifier is the name of anything defined by the user
+        IDENTIFIER: "IDENTIFIER",
 
         // Literals
         NUMBER: 'NUMBER',
@@ -40,6 +37,7 @@ export class JavaScriptLexer {
 
         EOF: 'EOF' //End of file
     };
+
     // Keywords of the JavaScript programming language
     static KEYWORDS = new Set([
         // Declaration keywords
@@ -56,15 +54,17 @@ export class JavaScriptLexer {
         'this', 'super', 'new', 'typeof', 'instanceof', 'void', 'delete',
         'in', 'of', 'with', 'yield', 'await', 'async'
     ]);
+
     static OPERATORS = new Set([
-        '+', '-', '*', '/', '%', '**', '++', '--', // Arithmetic operators
-        '=', '+=', '-=', '*=', '/=', '%=', '**=', // Assignment operators
-        '==', '===', '!=', '!==', '>', '<', '>=', '<=', // Comparison operators
-        '!', '&&', '||', '??', '?.', // Logical, Nullish Coalescing, Optional Chaining operators
-        '&', '|', '^', '~', '<<', '>>', '>>>', // Bitwise operators
-        '&=', '|=', '^=', '<<=', '>>=', '>>>', // Bitwise assignment operators
-        '=>', '...' // Arrow function, Spread/Rest operator
+        '+', '-', '*', '/', '%', '**', '++', '--',
+        '=', '+=', '-=', '*=', '/=', '%=', '**=',
+        '==', '===', '!=', '!==', '>', '<', '>=', '<=',
+        '!', '&&', '||', '??', '?.',
+        '&', '|', '^', '~', '<<', '>>', '>>>',
+        '&=', '|=', '^=', '<<=', '>>=', '>>>',
+        '=>', '...'
     ]);
+
     static PUNCTUATION = new Set(['(', ')', '[', ']', '{', '}', ',', ';', ':', '.']);
 
     private readonly code: string;
@@ -126,13 +126,17 @@ export class JavaScriptLexer {
         return currentCharacter;
     }
 
-    // Allows you to skip white spaces inside the source code until you get to meaningful parts of the code base.
+    /**
+     *  Allows you to skip white spaces inside the source code until you get to meaningful parts of the code base.
+     */
     skipWhiteSpace() {
         while (this.isWhitespace(this.peek()))
             this.advance();
     }
 
-    // Reads a number from the source code and returns it as a token.
+    /**
+     * Reads a number from the source code and returns it as a token.
+     */
     tokenizeNumber(): Token {
         let number = '';
         let hasDot = false;
@@ -167,7 +171,9 @@ export class JavaScriptLexer {
 
     }
 
-    // A normal string (non-templated) in JavaScript starts with either ' or ".
+    /**
+     * A normal string (non-templated) in JavaScript starts with either ' or ".
+     */
     tokenizeString(quoteCharacter: string): Token {
         let string = quoteCharacter;
         this.advance(); // The opening quote character has already been added to the string, so we skip it
@@ -195,7 +201,10 @@ export class JavaScriptLexer {
         };
     }
 
-    // Template strings in JavaScript are opened and closed with a backtick.
+
+    /**
+     * Template strings in JavaScript are opened and closed with a backtick.
+     */
     tokenizeTemplateString(): Token {
         let templateString = '`';
         this.advance(); // The opening backtick has already been added to the string so we skip it.
@@ -294,7 +303,9 @@ export class JavaScriptLexer {
         };
     }
 
-    // If it doesn't manage to read any operators or punctuations, it will return null.
+    /**
+     * If it doesn't manage to read any operators or punctuations, it will return null.
+     */
     tokenizeOperatorOrPunctuation(): Token | null {
         let operator = '';
 
@@ -329,7 +340,9 @@ export class JavaScriptLexer {
         return null;
     }
 
-    // The main part of this lexer which is in charge of the whole tokenization process.
+    /**
+     * The main part of this lexer which is in charge of the whole tokenization process.
+     */
     tokenize(): Token[] {
         this.tokens = [];
         this.position = 0;
